@@ -11,10 +11,10 @@ inputs:
       1) Clone manifest repo
       2) ...
     default: ${{ github.token }}
-    required: false
+    required: true
   manifest-url:
     description: >
-      Lunar manifest repo URL.
+      Lunar manifest repo URL, in the form of: github://<org>/<repo>@<branch>
     required: true
   log-level:
     description: >

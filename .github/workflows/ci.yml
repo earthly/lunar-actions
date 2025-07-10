@@ -19,3 +19,5 @@ jobs:
       - name: Lunar setup
         # local reference to the GHA
         uses: ./
+        with:
+          manifest-url: "github://pantalasa/lunar@localdev-nacho-main"
