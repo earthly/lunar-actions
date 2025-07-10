@@ -1,0 +1,60 @@
+name: Attach Lunar agent
+description: Attaches the Lunar agent to the current CI job
+branding:
+  icon: "sunrise"
+  color: "green"
+author: Earthly technologies
+inputs:
+  github-token:
+    description: >
+      The GitHub token used to make authenticated API requests. Requires permissions to:
+      1) Clone manifest repo
+      2) ...
+    default: ${{ github.token }}
+    required: false
+  manifest-url:
+    description: >
+      Lunar manifest repo URL.
+    required: true
+  log-level:
+    description: >
+      Lunar log level.
+    default: debug
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download Lunar binary
+      env:
+        FORCE_COLOR:1
+      run: |
+        echo "Downloading binary from ${{ inputs.binary-url }}"
+        mkdir -p /tmp/lunar/bin
+        curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
+        chmod +x /tmp/lunar/bin/lunar;
+        echo "lunar downloaded to /tmp/lunar/bin/lunar";
+      shell: bash
+
+    - name: Fetch manifest
+      env:
+          FORCE_COLOR:1
+          LUNAR_GITHUB_TOKEN:${{ inputs.github-token }}
+      run: |
+          lunar install ${{ inputs.manifest_url }}
+          lunar hub pull ${{ inputs.manifest_url }}
+      shell: bash
+
+#    - name: Attach to job
+#      env:
+#        FORCE_COLOR=1
+#        LOG_LEVEL=${{ inputs.log-level }}
+#        LUNAR_GITHUB_TOKEN=${{ inputs.github-token }}
+#        LUNAR_HUB_TOKEN
+#        LUNAR_HUB_HOST
+#        LUNAR_HUB_GRPC_PORT
+#        LUNAR_HUB_HTTP_PORT
+#      run: |
+#        /tmp/lunar/bin/lunar --pid=1
+#      shell: bash
+
