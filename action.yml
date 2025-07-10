@@ -41,8 +41,8 @@ runs:
           FORCE_COLOR: 1
           LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-          lunar install ${{ inputs.manifest_url }}
-          lunar hub pull ${{ inputs.manifest_url }}
+          /tmp/lunar/bin/lunar install ${{ inputs.manifest_url }}
+          /tmp/lunar/bin/lunar hub pull ${{ inputs.manifest_url }}
       shell: bash
 
 #    - name: Attach to job
