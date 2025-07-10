@@ -27,7 +27,7 @@ runs:
   steps:
     - name: Download Lunar binary
       env:
-        FORCE_COLOR:1
+        FORCE_COLOR: 1
       run: |
         echo "Downloading binary from ${{ inputs.binary-url }}"
         mkdir -p /tmp/lunar/bin
@@ -38,8 +38,8 @@ runs:
 
     - name: Fetch manifest
       env:
-          FORCE_COLOR:1
-          LUNAR_GITHUB_TOKEN:${{ inputs.github-token }}
+          FORCE_COLOR: 1
+          LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
           lunar install ${{ inputs.manifest_url }}
           lunar hub pull ${{ inputs.manifest_url }}
