@@ -29,7 +29,6 @@ runs:
       env:
         FORCE_COLOR: 1
       run: |
-        echo "Downloading binary from ${{ inputs.binary-url }}"
         mkdir -p /tmp/lunar/bin
         curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
         chmod +x /tmp/lunar/bin/lunar;
@@ -41,8 +40,8 @@ runs:
           FORCE_COLOR: 1
           LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-          /tmp/lunar/bin/lunar install ${{ inputs.manifest_url }}
-          /tmp/lunar/bin/lunar hub pull ${{ inputs.manifest_url }}
+          /tmp/lunar/bin/lunar install ${{ inputs.manifest-url }}
+          /tmp/lunar/bin/lunar hub pull ${{ inputs.manifest-url }}
       shell: bash
 
 #    - name: Attach to job
