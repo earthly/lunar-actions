@@ -15,5 +15,7 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Lunar setup
+        # local reference to the GHA
         uses: ./
