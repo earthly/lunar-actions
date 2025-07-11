@@ -60,24 +60,24 @@ runs:
 
     - name: Fetch manifest
       env:
-          FORCE_COLOR: 1
-          LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
-          LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
-          LUNAR_HUB_HOST: ${{ inputs.hub-host }}
-          LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
-          LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
+        FORCE_COLOR: 1
+        LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
+        LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+        LUNAR_HUB_HOST: ${{ inputs.hub-host }}
+        LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
       run: |
           /tmp/lunar/bin/lunar install ${{ inputs.manifest-url }}
       shell: bash
 
     - name: Attach to job
       env:
-      FORCE_COLOR: 1
-      LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
-      LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
-      LUNAR_HUB_HOST: ${{ inputs.hub-host }}
-      LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
-      LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
+        FORCE_COLOR: 1
+        LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
+        LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+        LUNAR_HUB_HOST: ${{ inputs.hub-host }}
+        LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
       run: |
         /tmp/lunar/bin/lunar --pid=1 > /tmp/lunar/logs.txt 2>&1 &
         echo $! > /tmp/lunar/agent.pid
