@@ -21,3 +21,4 @@ jobs:
         uses: ./
         with:
           manifest-url: "github://pantalasa/lunar@localdev-nacho-main"
+          lunar-hub-token:  "${{ secrets.LUNAR_HUB_TOKEN }}"

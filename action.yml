@@ -16,6 +16,8 @@ inputs:
     description: >
       Lunar manifest repo URL, in the form of: github://<org>/<repo>@<branch>
     required: true
+  lunar-hub-token:
+    required: true
   log-level:
     description: >
       Lunar log level.
@@ -38,7 +40,8 @@ runs:
     - name: Fetch manifest
       env:
           FORCE_COLOR: 1
-          LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+          LUNAR_GITHUB_TOKEN: ${{ inputs.lunar-hub-token }}
+          LUNAR_HUB_TOKEN_TOKEN: ${{ inputs.github-token }}
       run: |
           /tmp/lunar/bin/lunar install ${{ inputs.manifest-url }}
           /tmp/lunar/bin/lunar hub pull ${{ inputs.manifest-url }}
