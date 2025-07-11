@@ -35,6 +35,17 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Configure git credentials
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        GITHUB_USERNAME=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+             -H "Accept: application/vnd.github.v3+json" \
+             https://api.github.com/user | jq '.login')
+
+        git config --global credential.helper store
+        echo "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" > ~/.git-credentials
+        chmod 600 ~/.git-credentials
     - name: Download Lunar binary
       env:
         FORCE_COLOR: 1
