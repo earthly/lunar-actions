@@ -11,11 +11,21 @@ inputs:
       1) Clone manifest repo
       2) ...
     default: ${{ github.token }}
-    required: false
+    required: true
   manifest-url:
     description: >
-      Lunar manifest repo URL.
+      Lunar manifest repo URL, in the form of: github://<org>/<repo>@<branch>
     required: true
+  hub-token:
+    required: true
+  hub-host:
+    required: true
+  hub-grpc-port:
+    default: 443
+    required: false
+  hub-http-port:
+    default: 443
+    required: false
   log-level:
     description: >
       Lunar log level.
@@ -25,11 +35,23 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Configure git credentials
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        GITHUB_USERNAME=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+             -H "Accept: application/vnd.github.v3+json" \
+             https://api.github.com/user | jq '.login')
+
+        git config --global credential.helper store
+        echo "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" > ~/.git-credentials
+        chmod 600 ~/.git-credentials
+      shell: bash
+
     - name: Download Lunar binary
       env:
-        FORCE_COLOR:1
+        FORCE_COLOR: 1
       run: |
-        echo "Downloading binary from ${{ inputs.binary-url }}"
         mkdir -p /tmp/lunar/bin
         curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
         chmod +x /tmp/lunar/bin/lunar;
@@ -38,23 +60,37 @@ runs:
 
     - name: Fetch manifest
       env:
-          FORCE_COLOR:1
-          LUNAR_GITHUB_TOKEN:${{ inputs.github-token }}
+        FORCE_COLOR: 1
+        LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
+        LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+        LUNAR_HUB_HOST: ${{ inputs.hub-host }}
+        LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
       run: |
-          lunar install ${{ inputs.manifest_url }}
-          lunar hub pull ${{ inputs.manifest_url }}
+          /tmp/lunar/bin/lunar install ${{ inputs.manifest-url }}
       shell: bash
 
-#    - name: Attach to job
-#      env:
-#        FORCE_COLOR=1
-#        LOG_LEVEL=${{ inputs.log-level }}
-#        LUNAR_GITHUB_TOKEN=${{ inputs.github-token }}
-#        LUNAR_HUB_TOKEN
-#        LUNAR_HUB_HOST
-#        LUNAR_HUB_GRPC_PORT
-#        LUNAR_HUB_HTTP_PORT
-#      run: |
-#        /tmp/lunar/bin/lunar --pid=1
-#      shell: bash
+    - name: Attach to job
+      env:
+        FORCE_COLOR: 1
+        LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
+        LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+        LUNAR_HUB_HOST: ${{ inputs.hub-host }}
+        LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
+      run: |
+        echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+        pid=$$; while [ "$pid" -ne 1 ]; do echo "$(ps -p $pid -o pid=,ppid=,cmd=)"; pid=$(ps -p $pid -o ppid=); done; ps -p 1 -o pid=,ppid=,cmd=
+        runner_id=$(pid=$$; while [ "$pid" -ne 1 ] && [ -e "/proc/$pid" ]; do ppid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status); [ "$ppid" -eq 1 ] && echo "$pid"; pid=$ppid; done)
+        echo "$runner_id=$runner_id"
+        /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 &
+        echo $! > /tmp/lunar/agent.pid
+      shell: bash
+
+    - name: Tests
+      run: |
+        cat /tmp/lunar/agent.pid
+        cat /tmp/lunar/logs.txt
+        pid=$(cat /tmp/lunar/agent.pid); while [ "$pid" -ne 1 ]; do echo "$(ps -p $pid -o pid=,ppid=,cmd=)"; pid=$(ps -p $pid -o ppid=); done; ps -p 1 -o pid=,ppid=,cmd=
+      shell: bash
 

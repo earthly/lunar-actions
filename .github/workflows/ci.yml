@@ -1,0 +1,26 @@
+name: GitHub Actions CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lunar setup
+        # local reference to the GHA
+        uses: ./
+        with:
+          manifest-url: "github://pantalasa-cronos/lunar@main"
+          hub-token: "${{ secrets.LUNAR_HUB_TOKEN }}"
+          github-token: "${{ secrets.LUNAR_GITHUB_TOKEN }}"
+          hub-host: cronos.demo.earthly.dev
