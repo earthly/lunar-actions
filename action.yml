@@ -84,7 +84,6 @@ runs:
       shell: bash
 
     - name: Tests
-      env:
       run: |
         cat /tmp/lunar/agent.pid
         cat /tmp/lunar/logs.txt
