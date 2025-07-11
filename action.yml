@@ -81,7 +81,7 @@ runs:
       run: |
         echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
         pid=$$; while [ "$pid" -ne 1 ]; do echo "$(ps -p $pid -o pid=,ppid=,cmd=)"; pid=$(ps -p $pid -o ppid=); done; ps -p 1 -o pid=,ppid=,cmd=
-        runner_id=(pid=$$; while [ "$pid" -ne 1 ] && [ -e "/proc/$pid" ]; do ppid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status); [ "$ppid" -eq 1 ] && echo "$pid"; pid=$ppid; done)
+        runner_id=$(pid=$$; while [ "$pid" -ne 1 ] && [ -e "/proc/$pid" ]; do ppid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status); [ "$ppid" -eq 1 ] && echo "$pid"; pid=$ppid; done)
         echo "$runner_id=$runner_id"
         /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 &
         echo $! > /tmp/lunar/agent.pid
