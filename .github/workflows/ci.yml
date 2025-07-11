@@ -20,7 +20,7 @@ jobs:
         # local reference to the GHA
         uses: ./
         with:
-          manifest-url: "github://pantalasa-cronos/lunar@localdev-nacho-main"
+          manifest-url: "github://pantalasa-cronos/lunar@main"
           hub-token: "${{ secrets.LUNAR_HUB_TOKEN }}"
           github-token: "${{ secrets.LUNAR_GITHUB_TOKEN }}"
           hub-host: cronos.demo.earthly.dev
