@@ -18,6 +18,14 @@ inputs:
     required: true
   hub-token:
     required: true
+  hub-host:
+    required: true
+  hub-grpc-port:
+    default: 443
+    required: false
+  hub-http-port:
+    default: 443
+    required: false
   log-level:
     description: >
       Lunar log level.
@@ -42,6 +50,9 @@ runs:
           FORCE_COLOR: 1
           LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
           LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+          LUNAR_HUB_HOST: ${{ inputs.hub-host }}
+          LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+          LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
       run: |
           /tmp/lunar/bin/lunar install ${{ inputs.manifest-url }}
       shell: bash
