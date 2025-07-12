@@ -1,0 +1,51 @@
+name: Sync Lunar policy
+description: Report local policy to lunar hub
+branding:
+  icon: "sunrise"
+  color: "green"
+author: Earthly technologies
+inputs:
+  manifest-url:
+    description: >
+      Lunar manifest repo URL, in the form of: github://<org>/<repo>@<branch>
+    required: true
+  hub-token:
+    required: true
+  hub-host:
+    required: true
+  hub-grpc-port:
+    default: 443
+    required: false
+  hub-http-port:
+    default: 443
+    required: false
+  log-level:
+    description: >
+      Lunar log level.
+    default: debug
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download Lunar binary
+      env:
+        FORCE_COLOR: 1
+      run: |
+        mkdir -p /tmp/lunar/bin
+        curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
+        chmod +x /tmp/lunar/bin/lunar;
+        echo "lunar downloaded to /tmp/lunar/bin/lunar";
+      shell: bash
+
+    - name: Pull policy
+      env:
+        FORCE_COLOR: 1
+        LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
+        LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
+        LUNAR_HUB_HOST: ${{ inputs.hub-host }}
+        LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
+      run:  /tmp/lunar/bin/lunar hub pull -r ${{ inputs.manifest-url }}
+      shell: bash
+
