@@ -86,10 +86,9 @@ runs:
         echo $! > /tmp/lunar/agent.pid
       shell: bash
 
-    - name: Tests
+    - name: Logs
+      if: always()
       run: |
-        cat /tmp/lunar/agent.pid
         cat /tmp/lunar/logs.txt
-        pid=$(cat /tmp/lunar/agent.pid); while [ "$pid" -ne 1 ]; do echo "$(ps -p $pid -o pid=,ppid=,cmd=)"; pid=$(ps -p $pid -o ppid=); done; ps -p 1 -o pid=,ppid=,cmd=
       shell: bash
 
