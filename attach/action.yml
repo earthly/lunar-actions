@@ -86,9 +86,3 @@ runs:
         echo $! > /tmp/lunar/agent.pid
       shell: bash
 
-    - name: Logs
-      if: always()
-      run: |
-        cat /tmp/lunar/logs.txt
-      shell: bash
-
