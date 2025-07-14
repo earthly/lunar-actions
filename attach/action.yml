@@ -83,8 +83,8 @@ runs:
       run: |
         echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
         runner_id=$(pid=$$; while [ "$pid" -ne 1 ] && [ -e "/proc/$pid" ]; do ppid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status); [ "$ppid" -eq 1 ] && echo "$pid"; pid=$ppid; done)
+        runner_id=$PPID
         echo "Attaching agent to runner process with pid: $runner_id"
-        runner_id=$$
         bash -c "nohup /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 &"
       shell: bash
 
