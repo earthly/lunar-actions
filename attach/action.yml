@@ -87,13 +87,18 @@ runs:
         env bash -version
         # env bash -c "nohup /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 & echo \$! > /tmp/lunar/pid.txt"
         
+        (
         setsid nohup sleep 1000 > /dev/null 2>&1 &
-        pid=$!
-        sleep 1  # give it time to fully detach
-        ppid=$(awk '/^PPid:/ { print $2 }' /proc/$pid/status)
-        echo "Child PID: $pid, Parent PID: $ppid"
+        echo $! > /tmp/lunar/sampleid.txt
+        ) & disown
+        
+        pid=$(cat /tmp/lunar/sampleid.txt)
+        awk '/^PPid:/ { print $2 }' /proc/$pid/status
+ 
         sleep 5 
+        (
         setsid nohup /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 &
-        echo $!> /tmp/lunar/pid.txt
+        echo $! > /tmp/lunar/pid.txt
+        ) & disown
       shell: bash
 
