@@ -94,7 +94,7 @@ runs:
         echo $! > /tmp/lunar/pid.txt
         ) & disown
         pid=$(cat /tmp/lunar/pid.txt)
-        ppid= $(awk '/^PPid:/ { print $2 }' /proc/$pid/status)
+        ppid=$(awk '/^PPid:/ { print $2 }' /proc/$pid/status)
         echo "Running agent pid: $pid and ppid: $ppid"
       shell: bash
 
