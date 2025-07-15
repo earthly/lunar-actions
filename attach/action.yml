@@ -86,7 +86,14 @@ runs:
         echo "Attaching agent to runner process with pid: $runner_id"
         env bash -version
         # env bash -c "nohup /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 & echo \$! > /tmp/lunar/pid.txt"
+        
+        setsid nohup sleep 1000 > /dev/null 2>&1 &
+        pid=$!
+        sleep 1  # give it time to fully detach
+        ppid=$(awk '/^PPid:/ { print $2 }' /proc/$pid/status)
+        echo "Child PID: $pid, Parent PID: $ppid"
+        sleep 5 
         setsid nohup /tmp/lunar/bin/lunar --pid=$runner_id > /tmp/lunar/logs.txt 2>&1 &
-        echo $! > /tmp/lunar/pid.txt
+        echo $!> /tmp/lunar/pid.txt
       shell: bash
 
