@@ -52,6 +52,7 @@ runs:
       env:
         FORCE_COLOR: 1
       run: |
+        echo "pid $$ ppid $PPID"
         mkdir -p /tmp/lunar/bin
         curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
         chmod +x /tmp/lunar/bin/lunar;
@@ -68,6 +69,7 @@ runs:
         LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
         LUNAR_LOG_LEVEL: ${{ inputs.log-level }}
       run: |
+          echo "pid $$ ppid $PPID"
           /tmp/lunar/bin/lunar install ${{ inputs.manifest-url }}
       shell: bash
 
@@ -81,6 +83,7 @@ runs:
         LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
         LUNAR_LOG_LEVEL: ${{ inputs.log-level }}
       run: |
+        echo "pid $$ ppid $PPID"
         echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
         runner_id=$(pid=$$; while [ "$pid" -ne 1 ] && [ -e "/proc/$pid" ]; do ppid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status); [ "$ppid" -eq 1 ] && echo "$pid"; pid=$ppid; done)
         runner_id=$PPID
