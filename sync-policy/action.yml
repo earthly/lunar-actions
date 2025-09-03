@@ -1,8 +1,5 @@
 name: Sync Lunar policy
-description: Report local policy to lunar hub
-branding:
-  icon: "sunrise"
-  color: "green"
+description: Instruct Lunar hub to pull manifest
 author: Earthly technologies
 inputs:
   manifest-url:
@@ -10,6 +7,10 @@ inputs:
       Lunar manifest repo URL, in the form of: github://<org>/<repo>@<branch>
     required: true
   hub-token:
+    required: true
+  version:
+    description: >
+      Lunar version (vx.y.z), as one of the tags available at https://github.com/earthly/lunar-dist/tags
     required: true
   hub-host:
     required: true
@@ -33,7 +34,7 @@ runs:
         FORCE_COLOR: 1
       run: |
         mkdir -p /tmp/lunar/bin
-        curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
+        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.version }}/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
         chmod +x /tmp/lunar/bin/lunar;
         echo "lunar downloaded to /tmp/lunar/bin/lunar";
       shell: bash
