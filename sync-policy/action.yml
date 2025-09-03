@@ -8,7 +8,7 @@ inputs:
     required: true
   hub-token:
     required: true
-  version:
+  lunar-version:
     description: >
       Lunar version (vx.y.z), as one of the tags available at https://github.com/earthly/lunar-dist/tags
     required: true
@@ -34,7 +34,7 @@ runs:
         FORCE_COLOR: 1
       run: |
         mkdir -p /tmp/lunar/bin
-        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.version }}/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
+        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.lunar-version }}/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
         chmod +x /tmp/lunar/bin/lunar;
         echo "lunar downloaded to /tmp/lunar/bin/lunar";
       shell: bash
