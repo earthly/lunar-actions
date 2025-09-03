@@ -43,7 +43,6 @@ runs:
       env:
         FORCE_COLOR: 1
         LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
-        LUNAR_GITHUB_TOKEN: ${{ inputs.github-token }}
         LUNAR_HUB_HOST: ${{ inputs.hub-host }}
         LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
         LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
