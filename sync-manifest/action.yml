@@ -34,8 +34,8 @@ runs:
         FORCE_COLOR: 1
       run: |
         mkdir -p /tmp/lunar/bin
-        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.lunar-version }}/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
-        chmod +x /tmp/lunar/bin/lunar;
+        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.lunar-version }}/lunar-linux-amd64 -o /usr/local/bin/lunar
+        chmod +x /usr/local/bin/lunar
         echo "lunar downloaded to /tmp/lunar/bin/lunar";
       shell: bash
 
@@ -47,6 +47,6 @@ runs:
         LUNAR_HUB_HOST: ${{ inputs.hub-host }}
         LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
         LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
-      run:  /tmp/lunar/bin/lunar hub pull -r ${{ inputs.manifest-url }}
+      run: lunar hub pull -r ${{ inputs.manifest-url }}
       shell: bash
 
