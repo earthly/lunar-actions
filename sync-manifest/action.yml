@@ -1,6 +1,6 @@
 name: Sync Lunar manifest
 description: Instruct Lunar Hub to pull the latest manifest configuration
-author: Earthly technologies
+author: Earthly Technologies
 inputs:
   manifest-url:
     description: >
@@ -62,13 +62,13 @@ runs:
         LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
         LUNAR_LOG_LEVEL: ${{ inputs.log-level }}
       run: |
-        ARGS=""
+        ARGS=()
         if [ "${{ inputs.rerun-code-collectors }}" = "true" ]; then
-          ARGS="$ARGS -r"
+          ARGS+=("-r")
           if [ "${{ inputs.include-pr-commits }}" = "true" ]; then
-            ARGS="$ARGS --include-pr-commits"
+            ARGS+=("--include-pr-commits")
           fi
-          ARGS="$ARGS --pr-max-age-days ${{ inputs.pr-max-age-days }}"
+          ARGS+=("--pr-max-age-days" "${{ inputs.pr-max-age-days }}")
         fi
-        lunar hub pull $ARGS ${{ inputs.manifest-url }}
+        lunar hub pull "${ARGS[@]}" "${{ inputs.manifest-url }}"
       shell: bash
