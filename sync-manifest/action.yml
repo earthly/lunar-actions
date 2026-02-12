@@ -1,5 +1,5 @@
-name: Sync Lunar policy
-description: Instruct Lunar hub to pull manifest
+name: Sync Lunar manifest
+description: Instruct Lunar Hub to pull the latest manifest configuration
 author: Earthly technologies
 inputs:
   manifest-url:
@@ -15,10 +15,25 @@ inputs:
   hub-host:
     required: true
   hub-grpc-port:
-    default: 443
+    default: "443"
     required: false
   hub-http-port:
-    default: 443
+    default: "443"
+    required: false
+  rerun-code-collectors:
+    description: >
+      Rerun affected code collectors after pulling the manifest. Default: false.
+    default: "false"
+    required: false
+  include-pr-commits:
+    description: >
+      Include PR commits when rerunning code collectors. Only used when rerun-code-collectors is true.
+    default: "false"
+    required: false
+  pr-max-age-days:
+    description: >
+      Ignore PR commits older than this max (days). Only used when rerun-code-collectors is true.
+    default: "5"
     required: false
   log-level:
     description: >
@@ -33,19 +48,27 @@ runs:
       env:
         FORCE_COLOR: 1
       run: |
-        mkdir -p /tmp/lunar/bin
         curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.lunar-version }}/lunar-linux-amd64 -o /usr/local/bin/lunar
         chmod +x /usr/local/bin/lunar
-        echo "lunar downloaded to /tmp/lunar/bin/lunar";
+        echo "Lunar ${{ inputs.lunar-version }} installed"
       shell: bash
 
-    - name: Pull policy
+    - name: Pull manifest
       env:
         FORCE_COLOR: 1
         LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
         LUNAR_HUB_HOST: ${{ inputs.hub-host }}
         LUNAR_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
         LUNAR_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
-      run: lunar hub pull -r ${{ inputs.manifest-url }}
+        LUNAR_LOG_LEVEL: ${{ inputs.log-level }}
+      run: |
+        ARGS=""
+        if [ "${{ inputs.rerun-code-collectors }}" = "true" ]; then
+          ARGS="$ARGS -r"
+          if [ "${{ inputs.include-pr-commits }}" = "true" ]; then
+            ARGS="$ARGS --include-pr-commits"
+          fi
+          ARGS="$ARGS --pr-max-age-days ${{ inputs.pr-max-age-days }}"
+        fi
+        lunar hub pull $ARGS ${{ inputs.manifest-url }}
       shell: bash
-
