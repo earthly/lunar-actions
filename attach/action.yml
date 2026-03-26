@@ -54,7 +54,7 @@ runs:
       run: |
         echo "pid $$ ppid $PPID"
         mkdir -p /tmp/lunar/bin
-        curl -L https://github.com/earthly/lunar-dist/releases/download/v1.0.0/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
+        curl -L https://github.com/earthly/lunar-dist/releases/download/v1.1.1/lunar-linux-amd64 -o /tmp/lunar/bin/lunar
         chmod +x /tmp/lunar/bin/lunar;
         echo "lunar downloaded to /tmp/lunar/bin/lunar";
       shell: bash
