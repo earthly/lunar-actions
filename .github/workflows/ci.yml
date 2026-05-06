@@ -15,12 +15,11 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Lunar setup
-        # local reference to the GHA
-        uses: ./
+        uses: ./sync-config
         with:
           manifest-url: "github://pantalasa-cronos/lunar@main"
           hub-token: "${{ secrets.LUNAR_HUB_TOKEN }}"
-          github-token: "${{ secrets.LUNAR_GITHUB_TOKEN }}"
           hub-host: cronos.demo.earthly.dev
+          lunar-version: v1.1.1
