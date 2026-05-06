@@ -40,7 +40,7 @@ inputs:
   rerun-catalogers:
     description: >
       Rerun global catalogers after pulling the manifest. Default: false.
-      Requires lunar v1.0.11 or newer.
+      Requires lunar v1.1.2 or newer.
     default: "false"
     required: false
   log-level:

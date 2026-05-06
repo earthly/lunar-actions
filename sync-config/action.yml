@@ -11,7 +11,7 @@ inputs:
   lunar-version:
     description: >
       Lunar version (vx.y.z), as one of the tags available at https://github.com/earthly/lunar-dist/tags.
-      The `rerun-catalogers` input requires v1.0.11 or newer.
+      The `rerun-catalogers` input requires v1.1.2 or newer.
     required: true
   hub-host:
     required: true
@@ -40,7 +40,7 @@ inputs:
     description: >
       Rerun global catalogers after pulling the config. Default: false.
       Per-component catalogers (component-repo / component-cron) are unaffected
-      and continue to run on their own hooks. Requires lunar v1.0.11 or newer.
+      and continue to run on their own hooks. Requires lunar v1.1.2 or newer.
     default: "false"
     required: false
   log-level:
