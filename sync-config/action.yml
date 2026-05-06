@@ -1,7 +1,5 @@
-name: Sync Lunar manifest (deprecated)
-description: |
-  DEPRECATED — use earthly/lunar-actions/sync-config@main instead.
-  This action is kept as an alias so existing pinned references keep working.
+name: Sync Lunar config
+description: Instruct Lunar Hub to pull the latest config (manifest + snippets) from your config repo
 author: Earthly Technologies
 inputs:
   manifest-url:
@@ -12,7 +10,8 @@ inputs:
     required: true
   lunar-version:
     description: >
-      Lunar version (vx.y.z), as one of the tags available at https://github.com/earthly/lunar-dist/tags
+      Lunar version (vx.y.z), as one of the tags available at https://github.com/earthly/lunar-dist/tags.
+      The `rerun-catalogers` input requires v1.0.11 or newer.
     required: true
   hub-host:
     required: true
@@ -24,7 +23,7 @@ inputs:
     required: false
   rerun-code-collectors:
     description: >
-      Rerun affected code collectors after pulling the manifest. Default: false.
+      Rerun affected code collectors after pulling the config. Default: false.
     default: "false"
     required: false
   include-pr-commits:
@@ -39,8 +38,9 @@ inputs:
     required: false
   rerun-catalogers:
     description: >
-      Rerun global catalogers after pulling the manifest. Default: false.
-      Requires lunar v1.0.11 or newer.
+      Rerun global catalogers after pulling the config. Default: false.
+      Per-component catalogers (component-repo / component-cron) are unaffected
+      and continue to run on their own hooks. Requires lunar v1.0.11 or newer.
     default: "false"
     required: false
   log-level:
@@ -52,11 +52,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Deprecation notice
-      run: |
-        echo "::warning title=lunar-actions/sync-manifest is deprecated::Use earthly/lunar-actions/sync-config@main. The sync-manifest action is kept as an alias and will be removed in a future release."
-      shell: bash
-
     - name: Download Lunar binary
       env:
         FORCE_COLOR: 1
@@ -66,7 +61,7 @@ runs:
         echo "Lunar ${{ inputs.lunar-version }} installed"
       shell: bash
 
-    - name: Pull manifest
+    - name: Pull config
       env:
         FORCE_COLOR: 1
         LUNAR_HUB_TOKEN: ${{ inputs.hub-token }}
