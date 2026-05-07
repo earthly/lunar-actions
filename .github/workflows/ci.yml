@@ -22,4 +22,4 @@ jobs:
           manifest-url: "github://pantalasa-cronos/lunar@main"
           hub-token: "${{ secrets.LUNAR_HUB_TOKEN }}"
           hub-host: cronos.demo.earthly.dev
-          lunar-version: v1.1.1
+          lunar-version: v1.1.2

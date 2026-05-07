@@ -26,7 +26,7 @@ Tells Lunar Hub to pull the latest config (manifest + snippets) from your config
     manifest-url: github://my-org/my-config-repo@main
     hub-token: ${{ secrets.LUNAR_HUB_TOKEN }}
     hub-host: hub.example.com
-    lunar-version: v1.1.1
+    lunar-version: v1.1.2
     rerun-code-collectors: "true"  # optional
     rerun-catalogers: "false"       # optional
 ```
