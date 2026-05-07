@@ -4,17 +4,7 @@ Reusable GitHub Actions for [Lunar](https://docs.earthly.dev/) — Earthly's CI 
 
 ## Actions
 
-### `attach`
-
-Attaches the Lunar agent to the current CI job so it can trace and report on workflow execution.
-
-```yaml
-- uses: earthly/lunar-actions/attach@main
-  with:
-    manifest-url: github://my-org/my-config-repo@main
-    hub-token: ${{ secrets.LUNAR_HUB_TOKEN }}
-    hub-host: hub.example.com
-```
+For attaching the Lunar agent to a CI job (formerly `lunar-actions/attach`), use [`earthly/lunar-ci-action`](https://github.com/earthly/lunar-ci-action) — properly versioned, node20-based, and the action documented in the [`agent-managed`](https://docs-lunar.earthly.dev/install/agent-managed/) install guide.
 
 ### `sync-config`
 
