@@ -77,7 +77,7 @@ runs:
       run: |
         ARGS=()
         if [ "${{ inputs.rerun-code-collectors }}" = "true" ]; then
-          ARGS+=("-r")
+          ARGS+=("--rerun-code-collectors")
           if [ "${{ inputs.include-pr-commits }}" = "true" ]; then
             ARGS+=("--include-pr-commits")
           fi
