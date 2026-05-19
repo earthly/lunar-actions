@@ -36,6 +36,7 @@ Tells Lunar Hub to pull the latest config (manifest + snippets) from your config
 | `pr-max-age-days` | no | `5` | Ignore PR commits older than this when rerunning collectors |
 | `rerun-catalogers` | no | `false` | Rerun global catalogers after pulling. Per-component catalogers (`component-repo` / `component-cron`) are unaffected and continue to run on their own hooks. **Requires lunar v1.1.2+.** |
 | `log-level` | no | `debug` | Lunar log level |
+| `lunar-binary-path` | no | `/usr/local/bin/lunar` | Filesystem path to install the Lunar CLI. Override on self-hosted runners that can't write to `/usr/local/bin`. |
 
 These inputs map 1:1 to the equivalent flags on `lunar hub pull`. See the [CLI reference](https://docs.earthly.dev/lunar/lunar-cli) for behavior details.
 
