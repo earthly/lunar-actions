@@ -48,6 +48,12 @@ inputs:
       Lunar log level.
     default: debug
     required: false
+  lunar-binary-path:
+    description: >
+      Filesystem path to install the Lunar CLI binary to. Override this on
+      self-hosted runners that don't have write access to /usr/local/bin.
+    default: /usr/local/bin/lunar
+    required: false
 
 runs:
   using: "composite"
@@ -56,9 +62,9 @@ runs:
       env:
         FORCE_COLOR: 1
       run: |
-        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.lunar-version }}/lunar-linux-amd64 -o /usr/local/bin/lunar
-        chmod +x /usr/local/bin/lunar
-        echo "Lunar ${{ inputs.lunar-version }} installed"
+        curl -L https://github.com/earthly/lunar-dist/releases/download/${{ inputs.lunar-version }}/lunar-linux-amd64 -o "${{ inputs.lunar-binary-path }}"
+        chmod +x "${{ inputs.lunar-binary-path }}"
+        echo "Lunar ${{ inputs.lunar-version }} installed at ${{ inputs.lunar-binary-path }}"
       shell: bash
 
     - name: Pull config
@@ -81,5 +87,5 @@ runs:
         if [ "${{ inputs.rerun-catalogers }}" = "true" ]; then
           ARGS+=("--rerun-catalogers")
         fi
-        lunar hub pull "${ARGS[@]}" "${{ inputs.manifest-url }}"
+        "${{ inputs.lunar-binary-path }}" hub pull "${ARGS[@]}" "${{ inputs.manifest-url }}"
       shell: bash
