@@ -51,6 +51,29 @@ plus `release-notes.sql` (the ledger's release-range baseline). The comment at
 There is **no `lunar release` command**. Release association is a `lunar collect`
 write; the ledger is a Grafana dashboard over the resulting Component JSON.
 
+The payload above was checked against the reader's own SQL — the `jsonb_each` /
+`jsonb_typeof` expressions lifted verbatim out of `release_history.sql:151-161`
+and `var_from_sha.sql:38-46` — run over synthetic blobs, with control arms for
+each way it could plausibly be got wrong:
+
+| Blob | `total` | `approved` | qualifies as a release |
+| --- | ---: | ---: | --- |
+| **proposed** — `attempts` an object, `status: approved` | 1 | 1 | **yes** |
+| `attempts` an array instead of an object | 0 | 0 | no |
+| `status` something other than `approved` | 1 | 0 | no |
+| `.release.tag` only, no `.deployment` | 0 | 0 | no |
+| `.deployment` present but no `attempts` key | 0 | 0 | no |
+
+Two of those controls are worth dwelling on. The array case scores zero rather
+than erroring, which is the silent failure this shape invites. And the
+`.release.tag`-only case is the one an implementation would most naturally
+land on from reading the ticket — it writes something plausible, the CLI call
+succeeds, and the ledger stays empty.
+
+The third row is the intended behaviour of the `status` input: a non-`approved`
+attempt is still counted in `total`, so the Deployment history tab shows
+"attempted, none approved" rather than nothing at all.
+
 ### 2. Nothing writes that path today — the column has never had data
 
 `.deployment.attempts` is read in three places and written in none. Greps over
