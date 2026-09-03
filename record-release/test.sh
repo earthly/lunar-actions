@@ -74,7 +74,7 @@ check "sha: short sha outside a checkout fails" "[ \"$(rc "$c")\" != 0 ] && grep
 c="$work/upper"; run "$c" INPUT_SHA="$(printf '%s' "$full_sha" | tr '[:lower:]' '[:upper:]')"
 check "sha: uppercase is lowercased" "[ \"$(rc "$c")\" = 0 ] && [ \"$(out "$c" sha)\" = $full_sha ]"
 repo="$work/repo"; mkdir -p "$repo"
-( cd "$repo" && git init -q && git -c user.name=t -c user.email=t@t commit -q --allow-empty -m init && git tag -a v1.2.3 -m v1.2.3 )
+( cd "$repo" && git init -q && git -c user.name=t -c user.email=t@t commit -q --allow-empty -m init && git -c user.name=t -c user.email=t@t tag -a v1.2.3 -m v1.2.3 )
 head=$(git -C "$repo" rev-parse HEAD)
 c="$work/peel"; ( cd "$repo" && run "$c" INPUT_SHA="$(git rev-parse --short HEAD)" )
 check "sha: short sha peeled to the commit inside a checkout" "[ \"$(out "$c" sha)\" = \"$head\" ]"
