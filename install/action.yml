@@ -1,0 +1,79 @@
+name: Install Lunar CLI
+description: Install a pinned Lunar CLI release on the runner and export Hub connection settings for later steps
+author: Earthly Technologies
+inputs:
+  version:
+    description: >
+      Lunar CLI version to install, as a tag from https://github.com/earthly/lunar-dist/tags
+      (e.g. v3.20.0). Pinned on purpose: there is no floating default.
+    required: true
+  hub-host:
+    description: Lunar Hub hostname. Exported as LUNAR_HUB_HOST when export-env is true.
+    required: false
+    default: ""
+  hub-token:
+    description: Lunar Hub API token. Masked, and exported as LUNAR_HUB_TOKEN when export-env is true.
+    required: false
+    default: ""
+  hub-grpc-port:
+    description: gRPC port on the Hub. Exported with hub-host.
+    required: false
+    default: "443"
+  hub-http-port:
+    description: HTTP port on the Hub. Exported with hub-host.
+    required: false
+    default: "443"
+  log-level:
+    description: Lunar log level. Exported as LUNAR_LOG_LEVEL when set.
+    required: false
+    default: ""
+  install-dir:
+    description: >
+      Directory to install the binary into. Defaults to the runner tool cache
+      ($RUNNER_TOOL_CACHE/lunar/<version>/<arch>), which persists between jobs on a self-hosted runner.
+    required: false
+    default: ""
+  checksum:
+    description: Expected SHA-256 of the binary. Verified when set; the install fails on a mismatch.
+    required: false
+    default: ""
+  export-env:
+    description: >
+      Write LUNAR_HUB_HOST / LUNAR_HUB_TOKEN / LUNAR_HUB_GRPC_PORT / LUNAR_HUB_HTTP_PORT (and LUNAR_LOG_LEVEL)
+      to GITHUB_ENV so every later step in the job can call lunar directly. Set "false" to keep them step-scoped.
+    required: false
+    default: "true"
+  download-base-url:
+    description: >
+      Base URL the release assets are downloaded from. Override to point at an internal mirror of lunar-dist
+      on runners that cannot reach github.com. The asset path appended is <version>/<asset-name>.
+    required: false
+    default: https://github.com/earthly/lunar-dist/releases/download
+outputs:
+  lunar-path:
+    description: Absolute path to the installed binary.
+    value: ${{ steps.install.outputs.lunar-path }}
+  version:
+    description: The version tag that was installed.
+    value: ${{ steps.install.outputs.version }}
+  cache-hit:
+    description: "true when an already-installed binary of this version was reused."
+    value: ${{ steps.install.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - id: install
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_HUB_HOST: ${{ inputs.hub-host }}
+        INPUT_HUB_TOKEN: ${{ inputs.hub-token }}
+        INPUT_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        INPUT_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
+        INPUT_LOG_LEVEL: ${{ inputs.log-level }}
+        INPUT_INSTALL_DIR: ${{ inputs.install-dir }}
+        INPUT_CHECKSUM: ${{ inputs.checksum }}
+        INPUT_EXPORT_ENV: ${{ inputs.export-env }}
+        INPUT_DOWNLOAD_BASE_URL: ${{ inputs.download-base-url }}
+      run: '"$GITHUB_ACTION_PATH/install.sh"'
