@@ -11,8 +11,82 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: tests
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck install/install.sh install/test.sh record-release/record-release.sh record-release/test.sh
+
+  install-unit:
+    name: install (hermetic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: install/test.sh
+
+  record-release-unit:
+    name: record-release (hermetic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: record-release/test.sh
+
+  install:
+    name: install (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fresh install
+        id: first
+        uses: ./install
+        with:
+          version: v3.20.0
+          export-env: "false"
+      - name: Binary is on PATH and reports the pinned version
+        run: |
+          lunar version | grep -F '3.20.0'
+          [ "${{ steps.first.outputs.cache-hit }}" = "false" ]
+          [ "${{ steps.first.outputs.version }}" = "v3.20.0" ]
+          [ -x "${{ steps.first.outputs.lunar-path }}" ]
+          [ -z "${LUNAR_HUB_HOST:-}" ]
+      - name: Second install reuses the binary
+        id: second
+        uses: ./install
+        with:
+          version: v3.20.0
+          export-env: "false"
+      - run: '[ "${{ steps.second.outputs.cache-hit }}" = "true" ]'
+      - name: Checksum mismatch is rejected
+        id: bad-checksum
+        continue-on-error: true
+        uses: ./install
+        with:
+          version: v3.20.0
+          checksum: "0000000000000000000000000000000000000000000000000000000000000000"
+          install-dir: ${{ runner.temp }}/lunar-bad-checksum
+          export-env: "false"
+      - run: |
+          [ "${{ steps.bad-checksum.outcome }}" = "failure" ]
+          [ ! -e "${{ runner.temp }}/lunar-bad-checksum/lunar" ]
+      - name: export-env publishes Hub settings
+        uses: ./install
+        with:
+          version: v3.20.0
+          hub-host: hub.example.com
+          hub-token: not-a-real-token
+      - run: |
+          [ "$LUNAR_HUB_HOST" = "hub.example.com" ]
+          [ "$LUNAR_HUB_GRPC_PORT" = "443" ]
+          [ "$LUNAR_HUB_HTTP_PORT" = "443" ]
+          [ -n "$LUNAR_HUB_TOKEN" ]
+
+  sync-config:
+    name: sync-config
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

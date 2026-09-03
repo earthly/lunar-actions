@@ -1,0 +1,96 @@
+name: Record Lunar release
+description: Record that a commit was released, so Lunar shows it as a release rather than as one more commit
+author: Earthly Technologies
+inputs:
+  component:
+    description: >
+      Lunar component id, e.g. github.com/my-org/my-service. Defaults to $LUNAR_COMPONENT_ID,
+      then to the repository this workflow runs in.
+    required: false
+    default: ""
+  tag:
+    description: Release tag, written to .release.tag. Defaults to the pushed tag on a tag push; required otherwise.
+    required: false
+    default: ""
+  version:
+    description: Version without tag decoration (e.g. 1.2.3), written to .release.version when set.
+    required: false
+    default: ""
+  image:
+    description: Released image reference, written to .release.image when set.
+    required: false
+    default: ""
+  sha:
+    description: Released commit. Defaults to the commit that triggered the workflow. Must resolve to a full 40-character SHA.
+    required: false
+    default: ""
+  author:
+    description: Who released it. Defaults to the workflow actor.
+    required: false
+    default: ""
+  timestamp:
+    description: RFC 3339 release time. Defaults to now (UTC).
+    required: false
+    default: ""
+  workflow-run:
+    description: URL of the run that recorded the release. Defaults to this workflow run.
+    required: false
+    default: ""
+  artifact:
+    description: >
+      Write under .release.<artifact> instead of .release. For commits that ship several
+      independently versioned artifacts; letters, digits, '-' and '_' only.
+    required: false
+    default: ""
+  hub-host:
+    description: Lunar Hub hostname. Only needed when the install step did not export it.
+    required: false
+    default: ""
+  hub-token:
+    description: Lunar Hub API token. Only needed when the install step did not export it.
+    required: false
+    default: ""
+  hub-grpc-port:
+    description: gRPC port on the Hub. Defaults to the exported value, then 443.
+    required: false
+    default: ""
+  hub-http-port:
+    description: HTTP port on the Hub. Defaults to the exported value, then 443.
+    required: false
+    default: ""
+  lunar-path:
+    description: Lunar CLI binary to invoke. Defaults to `lunar` on PATH (what the install action provides).
+    required: false
+    default: ""
+outputs:
+  component:
+    description: The component the release was recorded against.
+    value: ${{ steps.record.outputs.component }}
+  sha:
+    description: The full commit SHA the release was recorded against.
+    value: ${{ steps.record.outputs.sha }}
+  path:
+    description: The JSON path written, .release or .release.<artifact>.
+    value: ${{ steps.record.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - id: record
+      shell: bash
+      env:
+        INPUT_COMPONENT: ${{ inputs.component }}
+        INPUT_TAG: ${{ inputs.tag }}
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_IMAGE: ${{ inputs.image }}
+        INPUT_SHA: ${{ inputs.sha }}
+        INPUT_AUTHOR: ${{ inputs.author }}
+        INPUT_TIMESTAMP: ${{ inputs.timestamp }}
+        INPUT_WORKFLOW_RUN: ${{ inputs.workflow-run }}
+        INPUT_ARTIFACT: ${{ inputs.artifact }}
+        INPUT_HUB_HOST: ${{ inputs.hub-host }}
+        INPUT_HUB_TOKEN: ${{ inputs.hub-token }}
+        INPUT_HUB_GRPC_PORT: ${{ inputs.hub-grpc-port }}
+        INPUT_HUB_HTTP_PORT: ${{ inputs.hub-http-port }}
+        INPUT_LUNAR_PATH: ${{ inputs.lunar-path }}
+      run: '"$GITHUB_ACTION_PATH/record-release.sh"'
