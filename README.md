@@ -4,7 +4,7 @@ Reusable GitHub Actions for [Lunar](https://docs.earthly.dev/) — Earthly's CI 
 
 ## Actions
 
-For attaching the Lunar agent to a CI job (formerly `lunar-actions/attach`), use [`earthly/lunar-ci-action`](https://github.com/earthly/lunar-ci-action) — properly versioned, node20-based, and the action documented in the [`agent-managed`](https://docs-lunar.earthly.dev/install/agent-managed/) install guide.
+For attaching the Lunar CI/CD Tracer to a CI job (formerly `lunar-actions/attach` and `earthly/lunar-ci-action`), use [`earthly/lunar-ci-tracer`](https://github.com/earthly/lunar-ci-tracer) — properly versioned, node20-based, and the action documented in the [GitHub Actions (Managed)](https://docs-lunar.earthly.dev/install/ci-tracer/github-actions-managed) install guide.
 
 ### `sync-config`
 
