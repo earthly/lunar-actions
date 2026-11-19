@@ -1,0 +1,6 @@
+domain: engineering.lunar.public
+codeowners:
+  - brandonSc
+
+description: GitHub Actions that install the Lunar CLI and sync config to a Lunar Hub
+tags: [soc2]
