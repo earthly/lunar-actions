@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Serve the test CLI in place of the release asset.
+set -euo pipefail
+args=()
+found=false
+for arg in "$@"; do
+  case "$arg" in
+    https://github.com/earthly/lunar-dist/releases/download/v1.1.2/lunar-linux-amd64)
+      args+=("file://${GITHUB_WORKSPACE}/tests/sync-config/lunar")
+      found=true
+      ;;
+    *) args+=("$arg") ;;
+  esac
+done
+[[ "$found" == true ]]
+exec /usr/bin/curl --proto '=file' "${args[@]}"
