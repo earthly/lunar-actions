@@ -16,10 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Lunar setup
+      - name: Use the local Lunar CLI fixture
+        run: echo "$GITHUB_WORKSPACE/tests/sync-config/bin" >> "$GITHUB_PATH"
+      - name: Exercise sync-config
         uses: ./sync-config
         with:
-          manifest-url: "github://pantalasa-cronos/lunar@main"
-          hub-token: "${{ secrets.LUNAR_HUB_TOKEN }}"
-          hub-host: cronos.demo.earthly.dev
+          manifest-url: github://example/config/lunar-config.test.yml@main
+          hub-token: test-token
+          hub-host: hub.example.invalid
           lunar-version: v1.1.2
+          lunar-binary-path: ${{ runner.temp }}/lunar
+      - name: Verify the action invoked the CLI
+        run: test -f "$RUNNER_TEMP/sync-config-passed"

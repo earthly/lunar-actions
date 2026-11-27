@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ $# == 3 && $1 == hub && $2 == pull ]]
+[[ $3 == 'github://example/config/lunar-config.test.yml@main' ]]
+[[ $LUNAR_HUB_HOST == hub.example.invalid && $LUNAR_HUB_TOKEN == test-token ]]
+[[ $LUNAR_HUB_GRPC_PORT == 443 && $LUNAR_HUB_HTTP_PORT == 443 ]]
+touch "$RUNNER_TEMP/sync-config-passed"
